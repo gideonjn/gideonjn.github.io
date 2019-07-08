@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<head>
+
+<title>Temporal Normalization</title>
+<meta name="keywords" content="affective computing, ">
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" media="screen" href="./project.css">
+<script src="plotly-latest.min.js"></script>
+<script src="math.min.js"></script>
+
+<script>
+function parseInput(text) {
+	var vals = text.split(/[\s\n,]+/);
+	for (var i = 0; i < vals.length; i++) {
+		vals[i] = parseFloat(vals[i]);
+	}
+	return vals.filter(function (x) {
+		return !Number.isNaN(x);
+	});
+}
+function updateHL(val) {
+	var hl = parseFloat(val)
+	if (isNaN(hl) || hl<=0.0) {
+		updateDecay(document.getElementById('rangeHL').value)
+		return;
+	}
+	var decay = 1.0-math.pow(0.5, 1.0/hl)
+	var adjDecay = 1.0-math.pow(decay, 1.0/2.651961753640607);
+	document.getElementById('rangeHL').value=adjDecay; 
+	updatePlot();
+}
+function getActualDecay(val) {
+	return math.pow(1.0-val,2.6519617536406077)
+}
+function updateDecay(val) {
+	var decay = getActualDecay(val)
+	if (decay == 0) {
+		document.getElementById('textHL').value="Infinity";
+	} else {
+		document.getElementById('textHL').value=Math.log(0.5)/Math.log(1.0-decay); 
+	}
+	updatePlot();
+}
+function updatePlot() {		
+	var dataText = document.getElementById("textData");
+	var x = parseInput(dataText.value);
+	
+	var textMean = document.getElementById("textMean");
+	var mean = parseFloat(textMean.value);
+	if (isNaN(mean)) {
+		textMean.classList.add('check');
+		return;
+	}
+		
+	var textStd = document.getElementById("textStd");
+	var std = parseFloat(textStd.value);
+	if (isNaN(mean)) {
+		textStd.classList.add('check');
+		return;
+	}
+	
+	var rangeHL = document.getElementById("rangeHL");
+	var decay = getActualDecay(rangeHL.value)
+	
+	var layout = {
+		l: 40,
+		r: 25,
+		b: 25,
+		t: 35,
+	};
+	
+	var plotData = document.getElementById('plotData');
+	Plotly.newPlot( plotData, [{
+	y: x, line: {width: 4, color: "#009696"} }], {
+	margin: layout, title: {text: 'Original Data', x: 0.025} } );
+	
+	var ma = new Array(x.length);
+	ma[0] = 0.0
+	var mv = new Array(x.length);
+	mv[0] = 1.0
+	var ms = new Array(x.length);
+	for (var i = 0; i < x.length; i++) {
+		ms = math.sqrt(mv[i]);
+		var val = (x[i]-mean)/std;
+		var delta = val - ma[i];
+		x[i] = delta/math.sqrt(mv[i]);
+		decayDel = decay * delta;
+		if (i < x.length - 1) {
+			ma[i+1] = ma[i] + decayDel;
+			mv[i+1] = (1.0 - decay) * (mv[i] + (decayDel * delta));
+		}
+	}
+	
+	var plotTN = document.getElementById('plotTN');
+	Plotly.newPlot( plotTN, [{
+	y: x, line: {width: 4, color: "#5e3c99"} }], {
+	margin: layout, title: {text: 'Normalized Data', x: 0.025} } );
+
+	var plotTN = document.getElementById('plotMean');
+	Plotly.newPlot( plotTN, [{
+	y: ma, line: {width: 4, color: "#fdb863"} }], {
+	margin: layout, title: {text: 'Running Mean', x: 0.025} } );
+
+	var plotTN = document.getElementById('plotStd');
+	Plotly.newPlot( plotTN, [{
+	y: mv, line: {width: 4, color: "#e66101"} }], {
+	margin: layout, title: {text: 'Running Standard Deviation', x: 0.025} } );
+}
+function updateStats() {
+	var dataText = document.getElementById("textData");
+	var textMean = document.getElementById("textMean");
+	var textStd = document.getElementById("textStd");
+	var x = parseInput(dataText.value);
+	textMean.value = math.mean(x);
+	textStd.value = math.std(x);
+	updatePlot()
+}
+function initPlot() {
+	document.getElementById('textData').value = "17,1,14,14,9,6,2,17,15,10,8,9,25,25,25,30,6,11,18,0"
+	document.getElementById('textHL').value = 4.0
+	updateHL(4.0)
+	updateStats()
+}
+</script>
+
+</head>
+
+<body>
+
+<ol id="menu">
+    <li><a href="../../index.html" class="red">&#9668;&nbsp; Return to Home</a>
+</ol>
+
+<div id="container">
+<div class="heading_bg"><h2>Paper Title</h2></div>
+
+<br>
+
+<div class="heading_bg"><h3>Abstract</h3></div>
+
+Paper Abstract Text
+
+<br><br>
+
+<div class="newline_bg"><h3>Demo</h3></div>
+<u>Input Data</u> <br>
+<textarea id="textData" cols=80 onchange=updatePlot()></textarea> 
+<br><br>
+<u>Scaling Values</u> <br>
+Mean: <input type="number" step="any" id="textMean" min="0" onchange=updatePlot()> &emsp;
+Standard Deviation: <input type="number" step="any" id="textStd" min="0" onchange=updatePlot()> <br>
+<button onclick="updateStats()">Calculate Stats</button> 
+<br><br>
+<u>Half-Life</u> <br>
+<input type="range" id="rangeHL" min="0.0000001" max="1" step="any" onchange=updateDecay(this.value)> <br>
+<input type="text" id="textHL" onchange=updateHL(this.value)>
+<br><br>
+<div id="plotData" class="plot_centered"></div><br>
+<div id="plotTN" class="plot_centered"></div><br>
+<div id="plotMean" class="plot_centered"></div><br>
+<div id="plotStd" class="plot_centered"></div><br>
+
+<script>
+initPlot()
+</script>
+
+<div class="newline_bg"><h3>Links</h3></div>
+
+<div class="list"><ul>
+<!--
+<li><a href="paper.pdf">Paper</a></li>
+-->
+</ul></div>
+
+<div class="newline_bg"><h3>Acknowledgements</h3></div>
+We are grateful to...
+<br>
+
+<div class="newline_bg"><h3>Citation</h3></div>
+@inproceedings{gideon2019tac,<br>
+&nbsp; 	title={Paper Title},<br>
+&nbsp;  author={Gideon, John and Matton, Katie and McInnis, Melvin and {Mower Provost}, Emily},<br>
+&nbsp; 	journal={IEEE Transactions on Affective Computing}<br>
+&nbsp; 	year={2019},<br>
+&nbsp; 	publisher={IEEE}<br>
+}
+<br>
+
+<div class="newline_bg"><h3>Changelog</h3></div>
+
+<div class="list"><ul>
+<li>2019-07-07: Project site created</li>
+</ul></div>
+
+</div>
+
+</body>
+</html>
