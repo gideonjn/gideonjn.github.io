@@ -48,14 +48,12 @@ function updatePlot() {
 	var textMean = document.getElementById("textMean");
 	var mean = parseFloat(textMean.value);
 	if (isNaN(mean)) {
-		textMean.classList.add('check');
 		return;
 	}
 		
 	var textStd = document.getElementById("textStd");
 	var std = parseFloat(textStd.value);
-	if (isNaN(mean)) {
-		textStd.classList.add('check');
+	if (isNaN(std) || std <= 0.0) {
 		return;
 	}
 	
@@ -116,7 +114,7 @@ function updateStats() {
 	updatePlot()
 }
 function initPlot() {
-	document.getElementById('textData').value = "17,1,14,14,9,6,2,17,15,10,8,9,25,25,25,30,6,11,18,0"
+	document.getElementById('textData').value = "17,1,14,14,9,6,2,17,15,10,8,9,25,25,25,25,25,25,25,25,30,6,11,18,0"
 	document.getElementById('textHL').value = 4.0
 	updateHL(4.0)
 	updateStats()
@@ -143,13 +141,13 @@ Paper Abstract Text
 <br><br>
 
 <div class="newline_bg"><h3>Demo</h3></div>
-<u>Input Data</u> <br>
+<u>Input Data</u> (Can be comma, space, or new line separated) <br>
 <textarea id="textData" cols=80 onchange=updatePlot()></textarea> 
 <br><br>
 <u>Scaling Values</u> <br>
 Mean: <input type="number" step="any" id="textMean" min="0" onchange=updatePlot()> &emsp;
 Standard Deviation: <input type="number" step="any" id="textStd" min="0" onchange=updatePlot()> <br>
-<button onclick="updateStats()">Calculate Stats</button> 
+<button onclick="updateStats()">Calculate From Data</button> 
 <br><br>
 <u>Half-Life</u> <br>
 <input type="range" id="rangeHL" min="0.0000001" max="1" step="any" onchange=updateDecay(this.value)> <br>
