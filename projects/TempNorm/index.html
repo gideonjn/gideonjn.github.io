@@ -141,15 +141,21 @@ Paper Abstract Text
 <br><br>
 
 <div class="newline_bg"><h3>Demo</h3></div>
-<u>Input Data</u> (Can be comma, space, or new line separated) <br>
+<div class="tooltip">Input Data
+  <span class="tooltiptext">The input data to be normalized. Can be comma, space, or new line separated.</span>
+</div> <br>
 <textarea id="textData" cols=80 onchange=updatePlot()></textarea> 
 <br><br>
-<u>Scaling Values</u> <br>
+<div class="tooltip">Scaling Values
+  <span class="tooltiptext">The initial z-normalization parameters to apply. It first subtracts the mean then divides by the standard deviation.</span>
+</div> <br>
 Mean: <input type="number" step="any" id="textMean" min="0" onchange=updatePlot()> &emsp;
 Standard Deviation: <input type="number" step="any" id="textStd" min="0" onchange=updatePlot()> <br>
 <button onclick="updateStats()">Calculate From Data</button> 
 <br><br>
-<u>Half-Life</u> <br>
+<div class="tooltip">Half-Life
+  <span class="tooltiptext">The number of new samples needed to change the running statistics by 50%. Smaller values cause the baseline to adapt faster.</span>
+</div> <br>
 <input type="range" id="rangeHL" min="0.0000001" max="1" step="any" onchange=updateDecay(this.value)> <br>
 <input type="text" id="textHL" onchange=updateHL(this.value)>
 <br><br>
