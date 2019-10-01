@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <head>
 
-<title>Temporal Normalization</title>
-<meta name="keywords" content="affective computing, ">
+<title>When to Intervene: Detecting Abnormal Mood using Everyday Smartphone Conversations</title>
+<meta name="keywords" content="bipolar disorder, mood recognition, anomaly detection, mobile health, speech analysis">
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" type="text/css" media="screen" href="./project.css">
 <script src="plotly-latest.min.js"></script>
@@ -78,7 +78,7 @@ function updatePlot() {
 	mv[0] = 1.0
 	var ms = new Array(x.length);
 	for (var i = 0; i < x.length; i++) {
-		ms = math.sqrt(mv[i]);
+		ms[i] = math.sqrt(mv[i]);
 		var val = (x[i]-mean)/std;
 		var delta = val - ma[i];
 		x[i] = delta/math.sqrt(mv[i]);
@@ -101,7 +101,7 @@ function updatePlot() {
 
 	var plotTN = document.getElementById('plotStd');
 	Plotly.newPlot( plotTN, [{
-	y: mv, line: {width: 4, color: "#e66101"} }], {
+	y: ms, line: {width: 4, color: "#e66101"} }], {
 	margin: layout, title: {text: 'Running Standard Deviation', x: 0.025} } );
 }
 function updateStats() {
@@ -130,13 +130,13 @@ function initPlot() {
 </ol>
 
 <div id="container">
-<div class="heading_bg"><h2>Paper Title</h2></div>
+<div class="heading_bg"><h2>When to Intervene: Detecting Abnormal Mood using Everyday Smartphone Conversations</h2></div>
 
 <br>
 
 <div class="heading_bg"><h3>Abstract</h3></div>
 
-Paper Abstract Text
+Bipolar disorder (BPD) is a chronic mental illness characterized by extreme mood and energy changes from mania to depression. These changes drive behaviors that often lead to devastating personal or social consequences. BPD is managed clinically with regular interactions with care providers, who assess mood, energy levels, and the form and content of speech. Recent work has proposed smartphones for monitoring mood using speech. However, these works do not predict when to intervene. Predicting when to intervene is challenging because there is not a single measure that is relevant for every person: different individuals may have different levels of symptom severity considered typical. Additionally, this typical mood, or baseline, may change over time, making a single symptom threshold insufficient. This work presents an innovative approach that expands clinical mood monitoring to predict when interventions are necessary using an anomaly detection framework, which we call \emph{Temporal Normalization}. We first validate the model using a dataset annotated for clinical interventions and then  incorporate this method in a deep learning framework to predict mood anomalies from natural, unstructured, telephone speech data.  The combination of these approaches provides a framework to enable real-world speech-focused mood monitoring.
 
 <br><br>
 
@@ -171,29 +171,28 @@ initPlot()
 <div class="newline_bg"><h3>Links</h3></div>
 
 <div class="list"><ul>
-<!--
 <li><a href="paper.pdf">Paper</a></li>
--->
 </ul></div>
 
 <div class="newline_bg"><h3>Acknowledgements</h3></div>
-We are grateful to...
+This work was supported by the National Science Foundation (CAREER-1651740). National Institute of Mental Health (R01MH108610, R34MH100404), the Heinz C Prechter Bipolar Research Fund, and the Richard Tam Foundation at the University of Michigan. Thanks to Ahmad Abu-Mohammad, Holli Bertram, Gary Graca, David Marshall, Bethany Navis, Kelly Ryan, Ariana Tart-Zelvin, and Kaela Van Til for their help with the annotations.
 <br>
 
-<div class="newline_bg"><h3>Citation</h3></div>
+<!--<div class="newline_bg"><h3>Citation</h3></div>
 @inproceedings{gideon2019tac,<br>
-&nbsp; 	title={Paper Title},<br>
-&nbsp;  author={Gideon, John and Matton, Katie and McInnis, Melvin and {Mower Provost}, Emily},<br>
+&nbsp; 	title={When to Intervene: Detecting Abnormal Mood using Everyday Smartphone Conversations},<br>
+&nbsp;  author={Gideon, John and Matton, Katie and Anderau, Steve and McInnis, Melvin and {Mower Provost}, Emily},<br>
 &nbsp; 	journal={IEEE Transactions on Affective Computing}<br>
 &nbsp; 	year={2019},<br>
 &nbsp; 	publisher={IEEE}<br>
 }
-<br>
+<br>-->
 
 <div class="newline_bg"><h3>Changelog</h3></div>
 
 <div class="list"><ul>
 <li>2019-07-07: Project site created</li>
+<li>2019-09-30: Added paper information</li>
 </ul></div>
 
 </div>
